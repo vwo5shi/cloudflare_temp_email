@@ -117,6 +117,11 @@ app.use('/api/*', async (c, next) => {
 	) {
 		await checkoutUserRolePayload(c);
 	}
+	// 允许未登录情况下访问 /api/retrieve_jwt
+	if (c.req.path.startsWith("/api/retrieve_jwt")) {
+		await next();
+		return;
+	}
 	return jwt({ secret: c.env.JWT_SECRET, alg: "HS256" })(c, next);
 });
 // user_api auth
