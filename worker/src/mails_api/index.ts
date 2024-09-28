@@ -103,44 +103,44 @@ api.get('/api/settings', async (c) => {
 })
 
 api.post('/api/new_address', async (c) => {
-	if (!getBooleanValue(c.env.ENABLE_USER_CREATE_EMAIL)) {
-		return c.text("New address is disabled", 403)
-}
-// eslint-disable-next-line prefer-const
-let { name, domain, cf_token, cardKey } = await c.req.json();
-// check cf turnstile
-try {
-		await checkCfTurnstile(c, cf_token);
-} catch (error) {
-		return c.text("Failed to check cf turnstile", 500)
-}
-// if no name, generate random name
-if (!name) {
-		name = Math.random().toString(36).substring(2, 15);
-}
-// check name block list
-try {
-		const value = await getJsonSetting(c, CONSTANTS.ADDRESS_BLOCK_LIST_KEY);
-		const blockList = (value || []) as string[];
-		if (blockList.some((item) => name.includes(item))) {
-				return c.text(`Name[${name}]is blocked`, 400)
-		}
-} catch (error) {
-		console.error(error);
-}
-try {
-		const addressPrefix = await getAddressPrefix(c);
-		const res = await newAddress(c, {
-				name, domain,
-				enablePrefix: true,
-				checkLengthByConfig: true,
-				addressPrefix,
-				cardKey, // 添加这一行
-		});
-		return c.json(res);
-} catch (e) {
-		return c.text(`Failed create address: ${(e as Error).message}`, 400)
-}
+    if (!getBooleanValue(c.env.ENABLE_USER_CREATE_EMAIL)) {
+        return c.text("New address is disabled", 403)
+    }
+    // eslint-disable-next-line prefer-const
+    let { name, domain, cf_token, cardKey } = await c.req.json();
+    // check cf turnstile
+    try {
+        await checkCfTurnstile(c, cf_token);
+    } catch (error) {
+        return c.text("Failed to check cf turnstile", 500)
+    }
+    // if no name, generate random name
+    if (!name) {
+        name = Math.random().toString(36).substring(2, 15);
+    }
+    // check name block list
+    try {
+        const value = await getJsonSetting(c, CONSTANTS.ADDRESS_BLOCK_LIST_KEY);
+        const blockList = (value || []) as string[];
+        if (blockList.some((item) => name.includes(item))) {
+            return c.text(`Name[${name}]is blocked`, 400)
+        }
+    } catch (error) {
+        console.error(error);
+    }
+    try {
+        const addressPrefix = await getAddressPrefix(c);
+        const res = await newAddress(c, {
+            name, domain,
+            enablePrefix: true,
+            checkLengthByConfig: true,
+            addressPrefix,
+            cardKey, // 添加这一行
+        });
+        return c.json(res);
+    } catch (e) {
+        return c.text(`Failed create address: ${(e as Error).message}`, 400)
+    }
 })
 api.delete('/api/delete_address', async (c) => {
     const { address, address_id } = c.get("jwtPayload")
@@ -149,3 +149,33 @@ api.delete('/api/delete_address', async (c) => {
         success: success
     })
 })
+
+// 新增的获取JWT的函数
+const retrieveJwt = async (
+    c: Context<HonoCustomType>
+): Promise<Response> => {
+    try {
+        const { cardKey } = await c.req.json<{ cardKey: string }>()
+        if (!cardKey) {
+            return c.json({ error: "未提供卡密" }, 400)
+        }
+
+        // 查询 card_keys 表获取 bind_jwt
+        const cardKeyRecord = await c.env.DB.prepare(
+            `SELECT bind_jwt FROM card_keys WHERE key = ? AND is_used = TRUE`
+        ).bind(cardKey).first<{ bind_jwt: string }>();
+
+        if (!cardKeyRecord || !cardKeyRecord.bind_jwt) {
+            return c.json({ error: "无效或未绑定的卡密" }, 400)
+        }
+
+        return c.json({ jwt: cardKeyRecord.bind_jwt }, 200)
+    } catch (error) {
+        return c.json({ error: (error as Error).message }, 400)
+    }
+};
+
+// 注册新的路由
+api.post('/api/retrieve_jwt', retrieveJwt)
+
+// 现有的路由注册...

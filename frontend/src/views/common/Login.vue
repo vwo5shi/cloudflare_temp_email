@@ -67,6 +67,28 @@ const login = async () => {
         message.error(error.message || "error");
     }
 }
+// 新增找回JWT部分的数据
+const retrieveCardKey = ref('');
+const retrievedJwt = ref('');
+const retrieveLoading = ref(false);
+
+// 方法：找回JWT
+const retrieveJWT = async () => {
+    if (!retrieveCardKey.value) {
+        message.error(t('pleaseEnterCardKey'));
+        return;
+    }
+    retrieveLoading.value = true;
+    try {
+        const response = await api.retrieveJwt({ cardKey: retrieveCardKey.value });
+        retrievedJwt.value = response.jwt;
+        message.success(t('retrieveSuccess'));
+    } catch (error) {
+        message.error(error.message || t('retrieveFailed'));
+    } finally {
+        retrieveLoading.value = false;
+    }
+};
 
 const { locale, t } = useI18n({
     messages: {
@@ -86,6 +108,12 @@ const { locale, t } = useI18n({
             bindUserAddressError: 'Error when bind email address to user',
             cardKey: 'Card Key',
             fillInAllFields: 'Please fill in all fields',
+            pleaseEnterCardKey: 'Please enter the card key.',
+            retrieveSuccess: 'JWT retrieved successfully.',
+            retrieveFailed: 'Failed to retrieve JWT. Invalid card key.',
+            retrieveJwtTitle: 'Retrieve JWT',
+            retrieveJwtDescription: 'If you forget your email JWT, please enter the card key sent during purchase to retrieve it.',
+            retrieveButton: 'Retrieve',
         },
         zh: {
             login: '登录',
@@ -103,6 +131,12 @@ const { locale, t } = useI18n({
             bindUserAddressError: '绑定邮箱地址到用户时错误',
             cardKey: '卡密',
             fillInAllFields: '请填写完整信息',
+            pleaseEnterCardKey: '请输入卡密。',
+            retrieveSuccess: 'JWT 找回成功。',
+            retrieveFailed: 'JWT 找回失败。卡密无效。',
+            retrieveJwtTitle: '找回JWT',
+            retrieveJwtDescription: '如果忘记自己的邮箱JWT，请输入在客服购买时发送的卡密，即可找回邮箱JWT。',
+            retrieveButton: '点击找回',
         }
     }
 });
@@ -265,7 +299,26 @@ onMounted(async () => {
                 <AdminContact />
             </n-tab-pane>
         </n-tabs>
+           <!-- 新增的找回JWT界面 -->
+           <div style="margin-top: 40px;">
+            <h2>{{ t('retrieveJwtTitle') }}</h2>
+            <p>{{ t('retrieveJwtDescription') }}</p>
+            <n-form>
+                <n-form-item :label="t('cardKey')" :label-placement="'left'">
+                    <n-input v-model:value="retrieveCardKey" placeholder="请输入卡密" />
+                </n-form-item>
+                <n-form-item>
+                    <n-button type="primary" @click="retrieveJWT" :loading="retrieveLoading">
+                        {{ t('retrieveButton') }}
+                    </n-button>
+                </n-form-item>
+                <n-form-item v-if="retrievedJwt">
+                    <n-input v-model:value="retrievedJwt" type="textarea" :autosize="{ minRows: 3 }" readonly placeholder="您的JWT将在此显示" />
+                </n-form-item>
+            </n-form>
+        </div>
     </div>
+       
 </template>
 
 

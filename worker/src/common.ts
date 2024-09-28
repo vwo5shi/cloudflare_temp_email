@@ -42,109 +42,120 @@ const getNameRegex = (c: Context<HonoCustomType>): RegExp => {
 }
 
 export const newAddress = async (
-    c: Context<HonoCustomType>,
-    {
-        name,
-        domain,
-        enablePrefix,
-        checkLengthByConfig = true,
-        addressPrefix = null,
-        checkAllowDomains = true,
-        enableCheckNameRegex = true,
-        cardKey,
-    }: {
-        name: string, domain: string | undefined | null,
-        enablePrefix: boolean,
-        checkLengthByConfig?: boolean,
-        addressPrefix?: string | undefined | null,
-        checkAllowDomains?: boolean,
-        enableCheckNameRegex?: boolean,
-        cardKey?: string,
-    }
+	c: Context<HonoCustomType>,
+	{
+			name,
+			domain,
+			enablePrefix,
+			checkLengthByConfig = true,
+			addressPrefix = null,
+			checkAllowDomains = true,
+			enableCheckNameRegex = true,
+			cardKey,
+	}: {
+			name: string, domain: string | undefined | null,
+			enablePrefix: boolean,
+			checkLengthByConfig?: boolean,
+			addressPrefix?: string | undefined | null,
+			checkAllowDomains?: boolean,
+			enableCheckNameRegex?: boolean,
+			cardKey?: string,
+	}
 ): Promise<{ address: string, jwt: string }> => {
 
 	if (cardKey) {
-		const cardKeyRecord = await c.env.DB.prepare(
-				`SELECT * FROM card_keys WHERE key = ? AND is_used = FALSE`
-		).bind(cardKey).first();
-		if (!cardKeyRecord) {
-				throw new Error("无效或已使用的卡密");
-		}
-		await c.env.DB.prepare(
-				`UPDATE card_keys SET is_used = TRUE WHERE key = ?`
-		).bind(cardKey).run();
-} else {
-		throw new Error("未填写卡密");
-}
+			const cardKeyRecord = await c.env.DB.prepare(
+					`SELECT * FROM card_keys WHERE key = ? AND is_used = FALSE`
+			).bind(cardKey).first();
+			if (!cardKeyRecord) {
+					throw new Error("无效或已使用的卡密");
+			}
+			await c.env.DB.prepare(
+					`UPDATE card_keys SET is_used = TRUE WHERE key = ?`
+			).bind(cardKey).run();
+	} else {
+			throw new Error("未填写卡密");
+	}
 
-    // remove special characters
-    name = name.replace(getNameRegex(c), '')
-    // check name
-    if (enableCheckNameRegex) {
-        await checkNameBlockList(c, name);
-        checkNameRegex(c, name);
-    }
-    // name min length min 1
-    const minAddressLength = Math.max(
-        checkLengthByConfig ? getIntValue(c.env.MIN_ADDRESS_LEN, 1) : 1,
-        1
-    );
-    // name max length min 1
-    const maxAddressLength = Math.max(
-        checkLengthByConfig ? getIntValue(c.env.MAX_ADDRESS_LEN, 30) : 30,
-        1
-    );
-    // check name length
-    if (name.length < minAddressLength) {
-        throw new Error(`Name too short (min ${minAddressLength})`);
-    }
-    if (name.length > maxAddressLength) {
-        throw new Error(`Name too long (max ${maxAddressLength})`);
-    }
-    // create address with prefix
-    if (typeof addressPrefix === "string") {
-        name = addressPrefix + name;
-    } else if (enablePrefix) {
-        name = getStringValue(c.env.PREFIX) + name;
-    }
-    // check domain
-    const allowDomains = checkAllowDomains ? await getAllowDomains(c) : getDomains(c);
-    // if domain is not set, use the first domain
-    if (!domain && allowDomains.length > 0) {
-        domain = allowDomains[0];
-    }
-    // check domain is valid
-    if (!domain || !allowDomains.includes(domain)) {
-        throw new Error("Invalid domain")
-    }
-    // create address
-    name = name + "@" + domain;
-    try {
-        const { success } = await c.env.DB.prepare(
-            `INSERT INTO address(name) VALUES(?)`
-        ).bind(name).run();
-        if (!success) {
-            throw new Error("Failed to create address")
-        }
-    } catch (e) {
-        const message = (e as Error).message;
-        if (message && message.includes("UNIQUE")) {
-            throw new Error("Address already exists")
-        }
-        throw new Error("Failed to create address")
-    }
-    const address_id = await c.env.DB.prepare(
-        `SELECT id FROM address where name = ?`
-    ).bind(name).first<number>("id");
-    // create jwt
-    const jwt = await Jwt.sign({
-        address: name,
-        address_id: address_id
-    }, c.env.JWT_SECRET, "HS256")
-    return {
-        jwt: jwt,
-        address: name,
-    }
+	// 移除特殊字符
+	name = name.replace(getNameRegex(c), '')
+	// 检查名称
+	if (enableCheckNameRegex) {
+			await checkNameBlockList(c, name);
+			checkNameRegex(c, name);
+	}
+	// 名称最小长度为1
+	const minAddressLength = Math.max(
+			checkLengthByConfig ? getIntValue(c.env.MIN_ADDRESS_LEN, 1) : 1,
+			1
+	);
+	// 名称最大长度为30
+	const maxAddressLength = Math.max(
+			checkLengthByConfig ? getIntValue(c.env.MAX_ADDRESS_LEN, 30) : 30,
+			1
+	);
+	// 检查名称长度
+	if (name.length < minAddressLength) {
+			throw new Error(`Name too short (min ${minAddressLength})`);
+	}
+	if (name.length > maxAddressLength) {
+			throw new Error(`Name too long (max ${maxAddressLength})`);
+	}
+	// 使用前缀创建地址
+	if (typeof addressPrefix === "string") {
+			name = addressPrefix + name;
+	} else if (enablePrefix) {
+			name = getStringValue(c.env.PREFIX) + name;
+	}
+	// 检查域名
+	const allowDomains = checkAllowDomains ? await getAllowDomains(c) : getDomains(c);
+	// 如果未设置域名，使用第一个域名
+	if (!domain && allowDomains.length > 0) {
+			domain = allowDomains[0];
+	}
+	// 检查域名是否有效
+	if (!domain || !allowDomains.includes(domain)) {
+			throw new Error("Invalid domain")
+	}
+	// 创建地址
+	name = name + "@" + domain;
+	try {
+			const { success } = await c.env.DB.prepare(
+					`INSERT INTO address(name) VALUES(?)`
+			).bind(name).run();
+			if (!success) {
+					throw new Error("Failed to create address")
+			}
+	} catch (e) {
+			const message = (e as Error).message;
+			if (message && message.includes("UNIQUE")) {
+					throw new Error("Address already exists")
+			}
+			throw new Error("Failed to create address")
+	}
+	const address_id = await c.env.DB.prepare(
+			`SELECT id FROM address where name = ?`
+	).bind(name).first<number>("id");
+	// 创建 JWT
+	const jwt = await Jwt.sign({
+			address: name,
+			address_id: address_id
+	}, c.env.JWT_SECRET, "HS256")
+
+	// 绑定 JWT 到 CDK（假设绑定逻辑）
+	// TODO: 根据具体的 CDK 绑定逻辑实现
+
+	// 更新 card_keys 表中的 bind_jwt
+	if (cardKey) {
+			await c.env.DB.prepare(
+					`UPDATE card_keys SET bind_jwt = ? WHERE key = ?`
+			).bind(jwt, cardKey).run();
+	}
+
+	return {
+			jwt: jwt,
+			address: name,
+	}
 }
 
 const checkNameBlockList = async (

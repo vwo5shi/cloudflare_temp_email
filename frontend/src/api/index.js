@@ -170,6 +170,22 @@ const bindUserAddress = async () => {
         throw error;
     }
 }
+const retrieveJwt = async ({ cardKey }) => {
+    const response = await fetch('/api/retrieve_jwt', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cardKey })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to retrieve JWT');
+    }
+
+    return response.json();
+}
 
 export const api = {
     fetch: apiFetch,
@@ -180,4 +196,5 @@ export const api = {
     adminShowAddressCredential,
     adminDeleteAddress,
     bindUserAddress,
+    retrieveJwt,
 }
