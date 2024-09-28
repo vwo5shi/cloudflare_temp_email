@@ -81,6 +81,7 @@ const retrieveJWT = async () => {
     retrieveLoading.value = true;
     try {
         const response = await api.retrieveJwt({ cardKey: retrieveCardKey.value });
+        console.log("Retrieved JWT:", response);
         retrievedJwt.value = response.jwt;
         message.success(t('retrieveSuccess'));
     } catch (error) {
