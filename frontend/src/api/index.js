@@ -171,21 +171,15 @@ const bindUserAddress = async () => {
     }
 }
 const retrieveJwt = async ({ cardKey }) => {
-    const response = await fetch('/api/retrieve_jwt', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ cardKey }) // 确保请求体正确
-    });
-
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to retrieve JWT');
+    try {
+        const response = await apiFetch('/api/retrieve_jwt', {
+            method: 'POST',
+            body: JSON.stringify({ cardKey })
+        });
+        return response;
+    } catch (error) {
+        throw new Error(error.message || 'Failed to retrieve JWT');
     }
-
-    return response.json();
 }
 
 export const api = {
