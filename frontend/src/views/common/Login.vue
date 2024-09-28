@@ -26,6 +26,7 @@ const props = defineProps({
                     name: address_name,
                     domain: domain,
                     cf_token: cf_token,
+                    card_key: card_key,
                 }),
             });
         },
@@ -244,7 +245,7 @@ onMounted(async () => {
                             <n-select v-model:value="emailDomain" :consistent-menu-width="false"
                                 :options="domainsOptions" />
                         </n-input-group>
-                        <n-form-item-row :label="'卡密'">
+                        <n-form-item-row :label="t('cardKey')">
     <n-input v-model:value="cardKey" />
 </n-form-item-row>
                         <Turnstile v-model:value="cfToken" />
