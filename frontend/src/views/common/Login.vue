@@ -19,14 +19,14 @@ const props = defineProps({
     },
     newAddressPath: {
         type: Function,
-        default: async (address_name, domain, cf_token) => {
+        default: async (address_name, domain, cf_token, cardKey) => {
             return await api.fetch("/api/new_address", {
                 method: "POST",
                 body: JSON.stringify({
                     name: address_name,
                     domain: domain,
                     cf_token: cf_token,
-                    card_key: card_key,
+                    cardKey: cardKey,
                 }),
             });
         },
