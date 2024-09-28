@@ -5,7 +5,7 @@
                 <n-form-item label="生成卡密数量">
                     <n-input v-model="count" type="number" />
                 </n-form-item>
-                <n-button type="primary" html-type="submit">生成</n-button>
+                <n-button type="primary" html-type="submit" @click="generateKeys">生成</n-button>
             </n-form>
         </n-card>
         <n-card v-if="keys.length">
