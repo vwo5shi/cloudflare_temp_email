@@ -24,6 +24,7 @@
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.7.7",
+    "cloudflare_temp_email": "file:",
     "jszip": "^3.10.1",
     "mail-parser-wasm": "^0.1.8",
     "naive-ui": "^2.40.1",

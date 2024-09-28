@@ -330,3 +330,23 @@ api.post("/admin/mail_webhook/test", mail_webhook_settings.testWebhookSettings);
 
 // worker config
 api.get("/admin/worker/configs", worker_config.getConfig);
+
+api.post('/admin/generate_card_keys', async (c) => {
+    const { count } = await c.req.json();
+    const keys = [];
+    for (let i = 0; i < count; i++) {
+        const key = Math.random().toString(36).substring(2, 15);
+        keys.push(key);
+        await c.env.DB.prepare(
+            `INSERT INTO card_keys(key) VALUES(?)`
+        ).bind(key).run();
+    }
+    return c.json({ keys });
+});
+
+api.get('/admin/card_keys', async (c) => {
+    const keys = await c.env.DB.prepare(
+        `SELECT * FROM card_keys`
+    ).all();
+    return c.json(keys);
+});
