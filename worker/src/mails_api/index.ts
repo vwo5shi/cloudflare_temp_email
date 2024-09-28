@@ -103,50 +103,44 @@ api.get('/api/settings', async (c) => {
 })
 
 api.post('/api/new_address', async (c) => {
-	try {
-			// 提取 cardKey 参数
-			const { name, domain, cf_token, cardKey } = await c.req.json();
-
-			// 检查 cf turnstile
-			try {
-					await checkCfTurnstile(c, cf_token);
-			} catch (error) {
-					return c.text("Failed to check cf turnstile", 500)
-			}
-
-			// 如果没有name，则生成随机name
-			if (!name) {
-					name = Math.random().toString(36).substring(2, 15);
-			}
-
-			// 检查名字是否在黑名单中
-			try {
-					const value = await getJsonSetting(c, CONSTANTS.ADDRESS_BLOCK_LIST_KEY);
-					const blockList = (value || []) as string[];
-					if (blockList.some((item) => name.includes(item))) {
-							return c.text(`Name[${name}] is blocked`, 400)
-					}
-			} catch (error) {
-					throw error;
-			}
-
-			// 提取地址前缀
-			const addressPrefix = await getAddressPrefix(c);
-
-			// 调用 newAddress 并传递 cardKey
-			const res = await newAddress(c, {
-					name,
-					domain,
-					enablePrefix: true,
-					checkLengthByConfig: true,
-					addressPrefix,
-					cardKey, // 添加这一行
-			});
-
-			return c.json(res);
-	} catch (e) {
-			return c.text(`Failed create address: ${(e as Error).message}`, 400)
-	}
+	if (!getBooleanValue(c.env.ENABLE_USER_CREATE_EMAIL)) {
+		return c.text("New address is disabled", 403)
+}
+// eslint-disable-next-line prefer-const
+let { name, domain, cf_token, cardKey } = await c.req.json();
+// check cf turnstile
+try {
+		await checkCfTurnstile(c, cf_token);
+} catch (error) {
+		return c.text("Failed to check cf turnstile", 500)
+}
+// if no name, generate random name
+if (!name) {
+		name = Math.random().toString(36).substring(2, 15);
+}
+// check name block list
+try {
+		const value = await getJsonSetting(c, CONSTANTS.ADDRESS_BLOCK_LIST_KEY);
+		const blockList = (value || []) as string[];
+		if (blockList.some((item) => name.includes(item))) {
+				return c.text(`Name[${name}]is blocked`, 400)
+		}
+} catch (error) {
+		console.error(error);
+}
+try {
+		const addressPrefix = await getAddressPrefix(c);
+		const res = await newAddress(c, {
+				name, domain,
+				enablePrefix: true,
+				checkLengthByConfig: true,
+				addressPrefix,
+				cardKey, // 添加这一行
+		});
+		return c.json(res);
+} catch (e) {
+		return c.text(`Failed create address: ${(e as Error).message}`, 400)
+}
 })
 api.delete('/api/delete_address', async (c) => {
     const { address, address_id } = c.get("jwtPayload")

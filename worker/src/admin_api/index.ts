@@ -38,18 +38,13 @@ api.get('/admin/address', async (c) => {
 })
 
 api.post('/admin/new_address', async (c) => {
-	const { name, domain, enablePrefix, cardKey } = await c.req.json();
-
-	// 检查必填字段
+	const { name, domain, enablePrefix , cardKey} = await c.req.json();
 	if (!name || !cardKey) {
-			return c.text("请提供名称和卡密", 400);
+			return c.text("请提供名称和卡密", 400)
 	}
-
 	try {
 			const res = await newAddress(c, {
-					name,
-					domain,
-					enablePrefix,
+					name, domain, enablePrefix,
 					cardKey, // 添加卡密参数
 					checkLengthByConfig: false,
 					addressPrefix: null,
@@ -58,9 +53,9 @@ api.post('/admin/new_address', async (c) => {
 			});
 			return c.json(res);
 	} catch (e) {
-			return c.text(`创建地址失败: ${(e as Error).message}`, 400);
+			return c.text(`Failed create address: ${(e as Error).message}`, 400)
 	}
-});
+})
 
 api.delete('/admin/delete_address/:id', async (c) => {
     const { id } = c.req.param();
