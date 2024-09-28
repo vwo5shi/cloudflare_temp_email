@@ -153,26 +153,30 @@ api.delete('/api/delete_address', async (c) => {
 })
 
 // 新增的获取JWT的函数
-const retrieveJwt = async (
-    c: Context<HonoCustomType>
-): Promise<Response> => {
+const retrieveJwt = async (c) => {
     try {
         const { cardKey } = await c.req.json<{ cardKey: string }>()
         if (!cardKey) {
+            console.error("Card key is missing in the request");
             return c.json({ error: "未提供卡密" }, 400)
         }
+        console.log("Received card key:", cardKey);
 
         // 查询 card_keys 表获取 bind_jwt
         const cardKeyRecord = await c.env.DB.prepare(
             `SELECT bind_jwt FROM card_keys WHERE key = ? AND is_used = TRUE`
         ).bind(cardKey).first<{ bind_jwt: string }>();
 
+        console.log("Database query result:", cardKeyRecord);
+
         if (!cardKeyRecord || !cardKeyRecord.bind_jwt) {
+            console.error("Invalid or unbound card key:", cardKey);
             return c.json({ error: "无效或未绑定的卡密" }, 400)
         }
 
         return c.json({ jwt: cardKeyRecord.bind_jwt }, 200)
     } catch (error) {
+        console.error("Error in retrieveJwt:", error);
         return c.json({ error: (error as Error).message }, 400)
     }
 };
