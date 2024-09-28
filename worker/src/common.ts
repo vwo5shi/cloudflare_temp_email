@@ -59,7 +59,7 @@ export const newAddress = async (
         addressPrefix?: string | undefined | null,
         checkAllowDomains?: boolean,
         enableCheckNameRegex?: boolean,
-        cardKey: string,
+        cardKey?: string,
     }
 ): Promise<{ address: string, jwt: string }> => {
 

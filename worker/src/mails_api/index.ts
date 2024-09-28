@@ -127,7 +127,7 @@ api.post('/api/new_address', async (c) => {
 							return c.text(`Name[${name}] is blocked`, 400)
 					}
 			} catch (error) {
-					console.error(error);
+					throw error;
 			}
 
 			// 提取地址前缀
