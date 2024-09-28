@@ -51,7 +51,7 @@ export const newAddress = async (
         addressPrefix = null,
         checkAllowDomains = true,
         enableCheckNameRegex = true,
-        cardKey = null,
+        cardKey,
     }: {
         name: string, domain: string | undefined | null,
         enablePrefix: boolean,
@@ -59,22 +59,23 @@ export const newAddress = async (
         addressPrefix?: string | undefined | null,
         checkAllowDomains?: boolean,
         enableCheckNameRegex?: boolean,
-        cardKey?: string | null,
+        cardKey: string,
     }
 ): Promise<{ address: string, jwt: string }> => {
-    if (cardKey) {
-        const cardKeyRecord = await c.env.DB.prepare(
-            `SELECT * FROM card_keys WHERE key = ? AND is_used = FALSE`
-        ).bind(cardKey).first();
-        if (!cardKeyRecord) {
-            throw new Error("Invalid or used card key");
-        }
-        await c.env.DB.prepare(
-            `UPDATE card_keys SET is_used = TRUE WHERE key = ?`
-        ).bind(cardKey).run();
-    } else {
-        throw new Error("Card key is required");
-    }
+
+	if (cardKey) {
+		const cardKeyRecord = await c.env.DB.prepare(
+				`SELECT * FROM card_keys WHERE key = ? AND is_used = FALSE`
+		).bind(cardKey).first();
+		if (!cardKeyRecord) {
+				throw new Error("无效或已使用的卡密");
+		}
+		await c.env.DB.prepare(
+				`UPDATE card_keys SET is_used = TRUE WHERE key = ?`
+		).bind(cardKey).run();
+} else {
+		throw new Error("未填写卡密");
+}
 
     // remove special characters
     name = name.replace(getNameRegex(c), '')
