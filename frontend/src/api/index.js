@@ -171,11 +171,14 @@ const bindUserAddress = async () => {
     }
 }
 const retrieveJwt = async ({ cardKey }) => {
-    const response = await apiFetch('/api/retrieve_jwt', {
+    const response = await fetch('/api/retrieve_jwt', {
         method: 'POST',
-   
-        body: JSON.stringify({ cardKey })
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cardKey }) // 确保请求体正确
     });
+
 
     if (!response.ok) {
         const errorData = await response.json();
