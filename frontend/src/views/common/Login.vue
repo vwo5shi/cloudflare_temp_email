@@ -249,8 +249,7 @@ onMounted(async () => {
                         </template>
                         {{ t('login') }}
                     </n-button>
-                    <n-button v-if="openSettings.enableUserCreateEmail" @click="tabValue = 'register'" block secondary
-                        strong>
+                    <n-button v-if="openSettings.enableUserCreateEmail" @click="tabValue = 'register'" block secondary strong>
                         <template #icon>
                             <n-icon :component="NewLabelOutlined" />
                         </template>
@@ -280,8 +279,8 @@ onMounted(async () => {
                                 :options="domainsOptions" />
                         </n-input-group>
                         <n-form-item-row :label="t('cardKey')">
-    <n-input v-model:value="cardKey" />
-</n-form-item-row>
+                            <n-input v-model:value="cardKey" />
+                        </n-form-item-row>
                         <Turnstile v-model:value="cfToken" />
                         <n-button type="primary" block secondary strong @click="newEmail" :loading="loading">
                             <template #icon>
@@ -292,6 +291,23 @@ onMounted(async () => {
                     </n-form>
                 </n-spin>
             </n-tab-pane>
+            <!-- 新增的找回JWT标签页 -->
+            <n-tab-pane name="retrieve_jwt" :tab="t('retrieveJwtTitle')">
+                <n-form>
+                    <p>{{ t('retrieveJwtDescription') }}</p>
+                    <n-form-item label="卡密" :label-placement="'left'">
+                        <n-input v-model:value="retrieveCardKey" placeholder="请输入卡密" />
+                    </n-form-item>
+                    <n-form-item>
+                        <n-button type="primary" @click="retrieveJWT" :loading="retrieveLoading">
+                            {{ t('retrieveButton') }}
+                        </n-button>
+                    </n-form-item>
+                    <n-form-item v-if="retrievedJwt">
+                        <n-input v-model:value="retrievedJwt" type="textarea" :autosize="{ minRows: 3 }" readonly placeholder="您的JWT将在此显示" />
+                    </n-form-item>
+                </n-form>
+            </n-tab-pane>
             <n-tab-pane name="help" :tab="t('help')">
                 <n-alert :show-icon="false" :bordered="false">
                     <span>{{ t('pleaseGetNewEmail') }}</span>
@@ -299,28 +315,8 @@ onMounted(async () => {
                 <AdminContact />
             </n-tab-pane>
         </n-tabs>
-           <!-- 新增的找回JWT界面 -->
-           <div style="margin-top: 40px;">
-            <h2>{{ t('retrieveJwtTitle') }}</h2>
-            <p>{{ t('retrieveJwtDescription') }}</p>
-            <n-form>
-                <n-form-item :label="t('cardKey')" :label-placement="'left'">
-                    <n-input v-model:value="retrieveCardKey" placeholder="请输入卡密" />
-                </n-form-item>
-                <n-form-item>
-                    <n-button type="primary" @click="retrieveJWT" :loading="retrieveLoading">
-                        {{ t('retrieveButton') }}
-                    </n-button>
-                </n-form-item>
-                <n-form-item v-if="retrievedJwt">
-                    <n-input v-model:value="retrievedJwt" type="textarea" :autosize="{ minRows: 3 }" readonly placeholder="您的JWT将在此显示" />
-                </n-form-item>
-            </n-form>
-        </div>
     </div>
-       
 </template>
-
 
 <style scoped>
 .n-alert {

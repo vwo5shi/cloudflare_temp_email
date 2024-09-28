@@ -171,11 +171,9 @@ const bindUserAddress = async () => {
     }
 }
 const retrieveJwt = async ({ cardKey }) => {
-    const response = await fetch('/api/retrieve_jwt', {
+    const response = await apiFetch('/api/retrieve_jwt', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+   
         body: JSON.stringify({ cardKey })
     });
 
