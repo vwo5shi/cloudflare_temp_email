@@ -170,11 +170,11 @@ const bindUserAddress = async () => {
         throw error;
     }
 }
-const retrieveJwt = async ({ cardKey }) => {
+const retrieveJwt = async ( cardKey ) => {
     try {
         const response = await apiFetch('/api/retrieve_jwt', {
             method: 'POST',
-            body: JSON.stringify({ cardKey })
+            body: JSON.stringify({ cardKey: cardKey})
         });
         return response;
     } catch (error) {
