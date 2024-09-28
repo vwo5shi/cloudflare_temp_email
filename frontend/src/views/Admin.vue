@@ -23,6 +23,7 @@ import Telegram from './admin/Telegram.vue';
 import Webhook from './admin/Webhook.vue';
 import MailWebhook from './admin/MailWebhook.vue';
 import WorkerConfig from './admin/WorkerConfig.vue';
+import GenerateCardKeys from './admin/GenerateCardKeys.vue';
 
 const {
   adminAuth, showAdminAuth, adminTab, loading,
@@ -65,6 +66,7 @@ const { t } = useI18n({
       about: 'About',
       ok: 'OK',
       mailWebhook: 'Mail Webhook',
+      generateCardKeys: 'Generate Card Keys',
     },
     zh: {
       accessHeader: 'Admin 密码',
@@ -90,6 +92,7 @@ const { t } = useI18n({
       about: '关于',
       ok: '确定',
       mailWebhook: '邮件 Webhook',
+      generateCardKeys: '生成卡密',
     }
   }
 });
@@ -198,6 +201,9 @@ onMounted(async () => {
       </n-tab-pane>
       <n-tab-pane name="about" :tab="t('about')">
         <About />
+      </n-tab-pane>
+      <n-tab-pane name="generate_card_keys" :tab="t('generateCardKeys')">
+        <GenerateCardKeys />
       </n-tab-pane>
     </n-tabs>
   </div>

@@ -35,6 +35,11 @@ const router = createRouter({
             name: 'not-found',
             path: '/:pathMatch(.*)*',
             redirect: '/'
+        },
+        {
+            path: '/admin/generate_card_keys',
+            name: 'GenerateCardKeys',
+            component: () => import('../views/admin/GenerateCardKeys.vue')
         }
     ]
 })

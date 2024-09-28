@@ -34,11 +34,12 @@ const { t } = useI18n({
 const enablePrefix = ref(true)
 const emailName = ref("")
 const emailDomain = ref("")
+const cardKey = ref("")
 const showReultModal = ref(false)
 const result = ref("")
 
 const newEmail = async () => {
-    if (!emailName.value || !emailDomain.value) {
+    if (!emailName.value || !emailDomain.value || !cardKey.value) {
         message.error(t('fillInAllFields'))
         return
     }
@@ -49,6 +50,7 @@ const newEmail = async () => {
                 enablePrefix: enablePrefix.value,
                 name: emailName.value,
                 domain: emailDomain.value,
+                cardKey: cardKey.value,
             })
         })
         result.value = res["jwt"];
@@ -89,6 +91,9 @@ onMounted(async () => {
                     <n-select v-model:value="emailDomain" :consistent-menu-width="false"
                         :options="openSettings.domains" />
                 </n-input-group>
+            </n-form-item-row>
+            <n-form-item-row :label="'卡密'">
+                <n-input v-model:value="cardKey" />
             </n-form-item-row>
             <n-button @click="newEmail" type="primary" block :loading="loading">
                 {{ t('creatNewEmail') }}
