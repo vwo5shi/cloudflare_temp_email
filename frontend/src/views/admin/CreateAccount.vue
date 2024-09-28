@@ -19,6 +19,9 @@ const { t } = useI18n({
             fillInAllFields: 'Please fill in all fields',
             successTip: 'Success Created',
             addressCredential: 'Mail Address Credential',
+                     // ... 其他翻译
+                     cardKey: 'Card Key',
+            fillInAllFields: 'Please fill in all fields',
         },
         zh: {
             address: '地址',
@@ -27,6 +30,8 @@ const { t } = useI18n({
             fillInAllFields: '请填写完整信息',
             successTip: '创建成功',
             addressCredential: '邮箱地址凭证',
+            cardKey: '卡密',
+            fillInAllFields: '请填写完整信息',
         }
     }
 });
@@ -92,9 +97,9 @@ onMounted(async () => {
                         :options="openSettings.domains" />
                 </n-input-group>
             </n-form-item-row>
-            <n-form-item-row :label="'卡密'">
-                <n-input v-model:value="cardKey" />
-            </n-form-item-row>
+            <n-form-item-row :label="t('cardKey')">
+    <n-input v-model:value="cardKey" />
+</n-form-item-row>
             <n-button @click="newEmail" type="primary" block :loading="loading">
                 {{ t('creatNewEmail') }}
             </n-button>

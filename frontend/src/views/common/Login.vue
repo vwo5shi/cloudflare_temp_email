@@ -46,6 +46,7 @@ const credential = ref('')
 const emailName = ref("")
 const emailDomain = ref("")
 const cfToken = ref("")
+const cardKey = ref("")
 
 const login = async () => {
     if (!credential.value) {
@@ -82,6 +83,8 @@ const { locale, t } = useI18n({
             credentialInput: 'Please input the Mail Address Credential',
             bindUserInfo: 'Logged in user, login without binding email or create new email address will bind to current user',
             bindUserAddressError: 'Error when bind email address to user',
+            cardKey: 'Card Key',
+            fillInAllFields: 'Please fill in all fields',
         },
         zh: {
             login: '登录',
@@ -97,6 +100,8 @@ const { locale, t } = useI18n({
             credentialInput: '请输入邮箱地址凭据',
             bindUserInfo: '已登录用户, 登录未绑定邮箱或创建新邮箱地址将绑定到当前用户',
             bindUserAddressError: '绑定邮箱地址到用户时错误',
+            cardKey: '卡密',
+            fillInAllFields: '请填写完整信息',
         }
     }
 });
@@ -130,13 +135,17 @@ const generateName = async () => {
         generateNameLoading.value = false;
     }
 };
-
 const newEmail = async () => {
+    if (!emailName.value || !emailDomain.value || !cardKey.value) {
+        message.error(t('fillInAllFields'))
+        return
+    }
     try {
         const res = await props.newAddressPath(
             emailName.value,
             emailDomain.value,
-            cfToken.value
+            cfToken.value,
+            cardKey.value  // 添加卡密参数
         );
         jwt.value = res["jwt"];
         await api.getSettings();
@@ -235,6 +244,9 @@ onMounted(async () => {
                             <n-select v-model:value="emailDomain" :consistent-menu-width="false"
                                 :options="domainsOptions" />
                         </n-input-group>
+                        <n-form-item-row :label="'卡密'">
+    <n-input v-model:value="cardKey" />
+</n-form-item-row>
                         <Turnstile v-model:value="cfToken" />
                         <n-button type="primary" block secondary strong @click="newEmail" :loading="loading">
                             <template #icon>

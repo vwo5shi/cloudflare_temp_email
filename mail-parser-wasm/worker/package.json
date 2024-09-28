@@ -20,5 +20,8 @@
   "types": "index.d.ts",
   "sideEffects": [
     "./snippets/*"
-  ]
+  ],
+  "dependencies": {
+    "mail-parser-wasm-worker": "file:"
+  }
 }

@@ -15,6 +15,7 @@
     "deploy": "npm run build && wrangler pages deploy ./docs/.vitepress/dist --project-name=temp-mail-docs --branch production"
   },
   "dependencies": {
-    "jszip": "^3.10.1"
+    "jszip": "^3.10.1",
+    "temp-mail-docs": "file:"
   }
 }
