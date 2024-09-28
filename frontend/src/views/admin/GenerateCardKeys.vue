@@ -26,6 +26,7 @@ const keys = ref([]);
 const message = useMessage();
 
 const generateKeys = async () => {
+    console.log('Response:', 1);
     try {
         console.log('Sending request to generate card keys...');
         const res = await api.fetch('/admin/generate_card_keys', {
