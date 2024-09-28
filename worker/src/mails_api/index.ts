@@ -7,9 +7,10 @@ import { CONSTANTS } from '../constants'
 import auto_reply from './auto_reply'
 import webhook_settings from './webhook_settings';
 import s3_attachment from './s3_attachment';
-
+import cors from 'hono/cors';
 export const api = new Hono<HonoCustomType>()
-
+// 添加CORS中间件
+api.use('*', cors());
 api.get('/api/auto_reply', auto_reply.getAutoReply)
 api.post('/api/auto_reply', auto_reply.saveAutoReply)
 api.get('/api/webhook/settings', webhook_settings.getWebhookSettings)
