@@ -88,7 +88,7 @@ const retrieveJWT = async () => {
         retrievedJwt.value = response.jwt;
         message.success(t('retrieveSuccess'));
     } catch (error) {
-        message.error(error.message || t('retrieveFailed'));
+        message.error(t('retrieveFailed'));
     } finally {
         retrieveLoading.value = false;
     }
@@ -114,7 +114,7 @@ const { locale, t } = useI18n({
             fillInAllFields: 'Please fill in all fields',
             pleaseEnterCardKey: 'Please enter the card key.',
             retrieveSuccess: 'JWT retrieved successfully.',
-            retrieveFailed: 'Failed to retrieve JWT. Invalid card key.',
+            retrieveFailed: 'Failed to retrieve JWT. Invalid card key. Please check if the card key is entered correctly/or not created an email.',
             retrieveJwtTitle: 'Retrieve JWT',
             retrieveJwtDescription: 'If you forget your email JWT, please enter the card key sent during purchase to retrieve it.',
             retrieveButton: 'Retrieve',
@@ -137,7 +137,7 @@ const { locale, t } = useI18n({
             fillInAllFields: '请填写完整信息',
             pleaseEnterCardKey: '请输入卡密。',
             retrieveSuccess: 'JWT 找回成功。',
-            retrieveFailed: 'JWT 找回失败。卡密无效。',
+            retrieveFailed: 'JWT 找回失败。卡密无效请检查卡密是否输入正确/或未创建过邮箱。',
             retrieveJwtTitle: '找回JWT',
             retrieveJwtDescription: '如果忘记自己的邮箱JWT，请输入在客服购买时发送的卡密，即可找回邮箱JWT。',
             retrieveButton: '点击找回',
