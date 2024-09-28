@@ -27,13 +27,16 @@ const message = useMessage();
 
 const generateKeys = async () => {
     try {
+        console.log('Sending request to generate card keys...');
         const res = await api.fetch('/admin/generate_card_keys', {
             method: 'POST',
             body: JSON.stringify({ count: count.value })
         });
+        console.log('Response:', res);
         keys.value = res.keys;
         message.success('卡密生成成功');
     } catch (error) {
+        console.error('Error:', error);
         message.error(error.message || '生成卡密失败');
     }
 };
