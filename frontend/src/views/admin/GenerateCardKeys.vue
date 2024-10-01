@@ -1,7 +1,7 @@
 <template>
     <div>
         <n-card>
-            <n-form @submit.prevent="generateKeys">
+            <n-form>
                 <n-form-item label="生成卡密数量">
                     <n-input v-model="count" type="number" />
                 </n-form-item>
@@ -21,12 +21,11 @@ import { ref } from 'vue';
 import { useMessage } from 'naive-ui';
 import { api } from '../../api';
 
-let count = 1;
+const count = ref(1);
 const keys = ref([]);
 const message = useMessage();
 
 const generateKeys = async () => {
-    console.log('Response:', 1);
     try {
         console.log('Sending request to generate card keys...');
         const res = await api.fetch('/admin/generate_card_keys', {
