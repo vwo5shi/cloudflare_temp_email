@@ -21,7 +21,7 @@ import { ref } from 'vue';
 import { useMessage } from 'naive-ui';
 import { api } from '../../api';
 
-const count = ref(1);
+let count = 1;
 const keys = ref([]);
 const message = useMessage();
 
