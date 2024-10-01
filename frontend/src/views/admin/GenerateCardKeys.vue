@@ -30,7 +30,7 @@ const generateKeys = async () => {
         console.log('Sending request with count:', currentCount);
         const res = await api.fetch('/admin/generate_card_keys', {
             method: 'POST',
-            body: JSON.stringify({ count: currentCount }),
+            body: JSON.stringify({ count: 10 }),
             headers: {
                 'Content-Type': 'application/json'
             }
