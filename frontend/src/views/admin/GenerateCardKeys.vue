@@ -26,11 +26,13 @@ const keys = ref([]);
 const message = useMessage();
 
 const generateKeys = async () => {
+    console.log('Current count:', count.value);
     try {
-        console.log('Sending request to generate card keys...');
+        const currentCount = count.value; // 获取当前值
+        console.log('Sending request with count:', currentCount);
         const res = await api.fetch('/admin/generate_card_keys', {
             method: 'POST',
-            body: JSON.stringify({ count: count.value })
+            body: JSON.stringify({ count: currentCount })
         });
         console.log('Response:', res);
         keys.value = res.keys;
