@@ -136,9 +136,9 @@ onMounted(() => {
         <SendBox :fetchMailData="fetchSenboxData" :enableUserDeleteEmail="openSettings.enableUserDeleteEmail"
           :deleteMail="deleteSenboxMail" />
       </n-tab-pane>
-      <n-tab-pane name="sendmail" :tab="t('sendmail')">
+      <!-- <n-tab-pane name="sendmail" :tab="t('sendmail')">
         <SendMail />
-      </n-tab-pane>
+      </n-tab-pane> -->
       <n-tab-pane name="accountSettings" :tab="t('accountSettings')">
         <AccountSettings />
       </n-tab-pane>
