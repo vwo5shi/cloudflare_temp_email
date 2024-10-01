@@ -1,12 +1,10 @@
 <template>
     <div>
         <n-card>
-            <n-form @submit.prevent="generateKeys">
-                <n-form-item label="生成卡密数量">
-                    <n-input v-model="count" type="number" />
-                </n-form-item>
-                <n-button type="primary" html-type="submit">生成</n-button>
-            </n-form>
+            <n-form-item label="生成卡密数量">
+                <n-input v-model="count" type="number" />
+            </n-form-item>
+            <n-button type="primary" @click="generateKeys">生成</n-button>
         </n-card>
         <n-card v-if="keys.length">
             <n-list>
@@ -32,7 +30,10 @@ const generateKeys = async () => {
         console.log('Sending request with count:', currentCount);
         const res = await api.fetch('/admin/generate_card_keys', {
             method: 'POST',
-            body: JSON.stringify({ count: currentCount })
+            body: JSON.stringify({ count: currentCount }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
         console.log('Response:', res);
         keys.value = res.keys;
