@@ -132,10 +132,10 @@ onMounted(() => {
           :saveToS3="saveToS3" :enableUserDeleteEmail="openSettings.enableUserDeleteEmail"
           :fetchMailData="fetchMailData" :deleteMail="deleteMail" />
       </n-tab-pane>
-      <n-tab-pane name="sendbox" :tab="t('sendbox')">
+      <!-- <n-tab-pane name="sendbox" :tab="t('sendbox')">
         <SendBox :fetchMailData="fetchSenboxData" :enableUserDeleteEmail="openSettings.enableUserDeleteEmail"
           :deleteMail="deleteSenboxMail" />
-      </n-tab-pane>
+      </n-tab-pane> -->
       <!-- <n-tab-pane name="sendmail" :tab="t('sendmail')">
         <SendMail />
       </n-tab-pane> -->
