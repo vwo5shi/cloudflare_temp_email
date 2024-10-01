@@ -2,7 +2,7 @@
     <div>
         <n-card>
             <n-form-item label="生成卡密数量">
-                <n-input v-model="count" type="number" />
+                <n-input v-model="count" />
             </n-form-item>
             <n-button type="primary" @click="generateKeys">生成</n-button>
         </n-card>
@@ -19,7 +19,7 @@ import { ref } from 'vue';
 import { useMessage } from 'naive-ui';
 import { api } from '../../api';
 
-const count = ref(1);
+const count = ref();
 const keys = ref([]);
 const message = useMessage();
 
