@@ -1,5 +1,6 @@
 import { Context, Hono } from 'hono'
 import { cors } from 'hono/cors';
+import { HTTPException } from 'hono/http-exception'
 import { jwt } from 'hono/jwt'
 import { Jwt } from 'hono/utils/jwt'
 
@@ -20,6 +21,10 @@ const app = new Hono<HonoCustomType>()
 app.use('/*', cors());
 // error handler
 app.onError((err, c) => {
+	// preserve HTTPException status codes (e.g. 401 from jwt middleware)
+	if (err instanceof HTTPException) {
+		return err.getResponse()
+	}
 	console.error(err)
 	return c.text(`${err.name} ${err.message}`, 500)
 })

@@ -2,6 +2,10 @@ import { useGlobalState } from '../store'
 import axios from 'axios'
 
 const API_BASE = import.meta.env.VITE_API_BASE || "";
+if (!API_BASE && typeof window !== 'undefined' && window.location.hostname.endsWith('.pages.dev')) {
+    console.warn('[api] VITE_API_BASE 未配置,当前部署在 pages.dev 域名上,'
+        + 'API 请求将发送到前端自身域名而失败。请在 Cloudflare Pages 环境变量中配置 VITE_API_BASE 为 worker 部署地址。');
+}
 const {
     loading, auth, jwt, settings, openSettings,
     userOpenSettings, userSettings, announcement,
@@ -45,6 +49,12 @@ const apiFetch = async (path, options = {}) => {
     } catch (error) {
         if (error.response) {
             throw new Error(`Code ${error.response.status}: ${error.response.data}` || "error");
+        }
+        if (error.code === 'ECONNABORTED') {
+            throw new Error("网络错误:请求邮件服务器超时,请稍后再试");
+        }
+        if (error.request || error.code === 'ERR_NETWORK') {
+            throw new Error("网络错误:无法连接到邮件服务器,请稍后再试");
         }
         throw error;
     } finally {
